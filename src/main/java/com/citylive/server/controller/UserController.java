@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -21,12 +21,32 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public User addUpdateUser(@RequestBody @Validated User user){
+    public User addUser(@RequestBody @Validated User user){
         return userService.addUser(user);
     }
 
+    @RequestMapping(method = RequestMethod.POST, path = "/jpa")
+    public User addUserWithJPA(@RequestBody @Validated User user){
+        return userService.addUserWithJPA(user);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/jpa/update")
+    public void updateUserWithJPA(@RequestBody @Validated User user){
+        userService.updateUser(user);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/jpa/find")
+    public Optional<User> findByUserName(String userName){
+        return userService.findByUserName(userName);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/jpa/delete")
+    public void delete(String userName){
+        userService.delete(userName);
+    }
+
     @RequestMapping(method = RequestMethod.GET, path = "/all")
-    public List<User> getAllUser(){
+    public Iterable<User> getAllUser(){
         return userService.getAllUser();
     }
 }

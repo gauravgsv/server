@@ -1,8 +1,8 @@
 package com.citylive.server.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -10,16 +10,22 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "`User`")
 public class User {
-    @JsonIgnore
-    private Integer userId;
     @NotNull
+    @Id
+    @Column(name = "`UserName`")
     private String userName;
     @NotNull
+    @Column(name = "`FirstName`")
     private String firstName;
+    @Column(name = "`LastName`")
     private String lastName;
     @NotNull
+    @Column(name = "`Email`")
     private String email;
     @NotNull
+    @Column(name = "`Password`")
     private String password;
 }
