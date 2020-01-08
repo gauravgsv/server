@@ -28,4 +28,6 @@ public class User {
     @NotNull
     @Column(name = "`Password`")
     private String password;
+    @Column(name = "`Role`")
+    private String role = "USER";
 }
