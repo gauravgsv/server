@@ -13,6 +13,6 @@ import javax.transaction.Transactional;
 public interface UserRepository extends CrudRepository<User, String> {
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query(value = "Update \"CityLiveDev\".\"User\" Set \"Password\"=:password where \"UserName\"=:userName", nativeQuery = true)
+    @Query(value = "Update CityLive.User Set Password=:password where UserName=:userName", nativeQuery = true)
     void updateUserPassword(@Param("userName") String userName, @Param("password") String password);
 }
