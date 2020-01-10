@@ -30,8 +30,8 @@ public class UserSecurity extends WebSecurityConfigurerAdapter {
                 return encodedPassword.equals(rawPassword);
             }
         })
-                .usersByUsernameQuery("select \"UserName\",\"Password\", true as enabled from \"CityLiveDev\".\"User\" where \"UserName\"=?")
-                .authoritiesByUsernameQuery("select \"UserName\",\"Role\" from \"CityLiveDev\".\"User\" where \"UserName\"=?");
+                .usersByUsernameQuery("select UserName,Password,enabled from CityLive.User where UserName=?")
+                .authoritiesByUsernameQuery("select UserName,Role from CityLive.User_Role where UserName=?");
     }
 
     @Override

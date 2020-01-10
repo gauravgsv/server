@@ -25,22 +25,17 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/jpa")
-    public User addUserWithJPA(@RequestBody @Validated User user){
-        return userService.addUserWithJPA(user);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, path = "/jpa/update")
+    @RequestMapping(method = RequestMethod.POST, path = "/update")
     public void updateUserWithJPA(@RequestBody @Validated User user){
         userService.updateUser(user);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/jpa/find")
+    @RequestMapping(method = RequestMethod.GET, path = "/find")
     public Optional<User> findByUserName(String userName){
         return userService.findByUserName(userName);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/jpa/delete")
+    @RequestMapping(method = RequestMethod.DELETE, path = "/delete")
     public void delete(String userName){
         userService.delete(userName);
     }

@@ -1,11 +1,14 @@
 package com.citylive.server.service;
 
 import com.citylive.server.dao.UserRepository;
+import com.citylive.server.dao.UserRoleRepository;
 import com.citylive.server.domain.User;
+import com.citylive.server.domain.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -15,12 +18,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User addUser(User user) {
-        return userRepository.save(user);
-    }
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
-    public User addUserWithJPA(User user){
-        return userRepository.save(user);
+    @Transactional
+    public User addUser(User user) {
+        user.setEnabled(true);
+        User updatedUser = userRepository.save(user);
+        userRoleRepository.save(UserRole.builder().userName(updatedUser.getUserName()).role("ROLE_USER").build());
+        return updatedUser;
     }
 
     public Iterable<User> getAllUser() {
@@ -36,6 +42,7 @@ public class UserService {
     }
 
     public void delete(String userName) {
+        userRoleRepository.deleteById(userName);
         userRepository.deleteById(userName);
     }
 }
