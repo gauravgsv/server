@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.citylive.server.constants.Constants;
 import com.citylive.server.pojo.Query;
 import com.citylive.server.pojo.Response;
 import com.citylive.server.pojo.ResponseType;
@@ -23,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
+import com.google.firebase.messaging.Notification;
 
 @RestController
 @RequestMapping("/message")
@@ -43,11 +45,11 @@ public class MessagingService {
 
 		// Send message to particular device id
 		String registrationToken = param1;
-
-		Message message = Message.builder().putData("score", "1000").setToken(registrationToken).build();
+        Notification notification = Notification.builder().setTitle("Notification Test").setBody("Stay alert!").build();
+		Message message = Message.builder().setNotification(notification)
+				.setToken(registrationToken).build();
 		String response = FirebaseMessaging.getInstance().send(message);
 		return ResponseEntity.ok("Successfully sent message: " + response);
-
 	}
 
 	@RequestMapping(method = RequestMethod.POST, path = "/notifyTopic")
@@ -56,9 +58,11 @@ public class MessagingService {
 		String topic = response.getTopic();
 		Message message = null;
 		if (ResponseType.RESPONSE.equals(response.getType())) {
-			message = Message.builder().putData("response", response.getResponseString()).setTopic(topic).build();
+			Notification notification = Notification.builder().setTitle(Constants.RESPONSE_NOTIFICATION_TITLE).setBody(response.getResponseString()).build();
+			message = Message.builder().setNotification(notification).setTopic(topic).build();
 		} else {
-			message = Message.builder().putData("unsubscribe", "true").setTopic(topic).build();
+			Notification notification = Notification.builder().setTitle("Unsubscribe").build();
+			message = Message.builder().setNotification(notification).setTopic(topic).build();
 		}
 		// Send a message to the devices subscribed to the provided topic.
 		String response_fb = FirebaseMessaging.getInstance().send(message);
@@ -71,9 +75,9 @@ public class MessagingService {
 			throws FirebaseMessagingException {
 		// Upper limit on number of devices ids = 100
 		List<String> registrationTokens = query.getDeviceIds();
-
-		MulticastMessage message = MulticastMessage.builder().putData("question", query.getQuestion())
-				.putData("topic", query.getTopic()).addAllTokens(registrationTokens).build();
+		Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE).setBody(query.getQuestion()).build();
+		MulticastMessage message = MulticastMessage.builder().setNotification(notification)
+                  .addAllTokens(registrationTokens).build();
 		BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
 		// See the BatchResponse reference documentation
 		// for the contents of response.
