@@ -24,4 +24,5 @@ public class User {
     @NotNull
     private String password;
     private Boolean enabled = true;
+    private String deviceId;
 }
