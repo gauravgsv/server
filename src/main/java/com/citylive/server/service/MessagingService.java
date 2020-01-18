@@ -37,8 +37,6 @@ public class MessagingService {
 		FirebaseApp.initializeApp(options);
 	}
 
-	
-
 	@RequestMapping(method = RequestMethod.POST, path = "/notifyTopic")
 	public ResponseEntity sendNotificationToTopicPost(@RequestBody Response response)
 			throws FirebaseMessagingException {
@@ -50,7 +48,8 @@ public class MessagingService {
 		Notification notification = Notification.builder().setTitle(Constants.RESPONSE_NOTIFICATION_TITLE)
 				.setBody(response.getResponseString()).build();
 		Message message = Message.builder().putData("type", response.getType().toString())
-				.putData("topic", response.getTopic()).putData("by", response.getSender())
+				.putData("topic", response.getTopic()).putData("msg",response.getResponseString())
+				.putData("by", response.getSender())
 				.putData("time", response.getMessageTimestamp().toString()).setNotification(notification)
 				.setTopic(response.getTopic()).build();
 		// Send a message to the devices subscribed to the provided topic.
@@ -63,7 +62,6 @@ public class MessagingService {
 			throws FirebaseMessagingException {
 		// Upper limit on number of devices ids = 100
 		return ResponseEntity.ok(sendNotificationToMultipleDevices(query) + " messages were sent successfully");
-
 	}
 
 	public String sendQueryToDevices(Query query) throws FirebaseMessagingException {
@@ -76,12 +74,13 @@ public class MessagingService {
 		Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE)
 				.setBody(query.getQuestion()).build();
 		MulticastMessage message = MulticastMessage.builder().putData("type", query.getType().toString())
-				.putData("topic", query.getTopic()).putData("by", query.getSender()).setNotification(notification)
+				.putData("topic", query.getTopic()).putData("question", query.getQuestion())
+				.putData("by", query.getSender()).setNotification(notification)
 				.addAllTokens(registrationTokens).build();
 		BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
 		return response.getSuccessCount();
 	}
-	
+
 	private String sendNotificationToDevice(Query query, Integer count) throws FirebaseMessagingException {
 		String registrationToken = query.getSenderDeviceId();
 		Notification notification = Notification.builder().setTitle(Constants.SILENT_NOTIFICATION)
