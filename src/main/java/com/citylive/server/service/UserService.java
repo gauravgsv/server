@@ -75,7 +75,6 @@ public class UserService {
         } else {
             location = userLocationRepository.save(userLocation.toBuilder().locationType("CURRENT").build());
         }
-        // to do
         mtree.add(new Data(userLocation.getUserName(),location.getLongitude(),location.getLatitude()));
         return location;
 
