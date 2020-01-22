@@ -1,5 +1,7 @@
 package com.citylive.server.service;
 
+import com.citylive.server.MTree.Planar.MTree2D;
+import com.citylive.server.MTree.common.Data;
 import com.citylive.server.dao.UserLocationRepository;
 import com.citylive.server.dao.UserRepository;
 import com.citylive.server.dao.UserRoleRepository;
@@ -25,6 +27,9 @@ public class UserService {
 
     @Autowired
     private UserLocationRepository userLocationRepository;
+
+    @Autowired
+    private MTree2D mtree;
 
     @Transactional
     public User addUser(User user) {
@@ -62,11 +67,16 @@ public class UserService {
 
     public UserLocation updateUserLocation(UserLocation userLocation) {
         Optional<UserLocation> userLocationOptional = userLocationRepository.findById(userLocation.getUserName());
+
+        UserLocation location = null;
         if(userLocationOptional.isPresent()) {
             userLocationRepository.updateUserLocation(userLocation.getUserName(), userLocation.getLatitude(), userLocation.getLongitude());
-            return userLocationRepository.findById(userLocation.getUserName()).get();
+            location = userLocationRepository.findById(userLocation.getUserName()).get();
         } else {
-            return userLocationRepository.save(userLocation.toBuilder().locationType("CURRENT").build());
+            location = userLocationRepository.save(userLocation.toBuilder().locationType("CURRENT").build());
         }
+        mtree.add(new Data(userLocation.getUserName(),location.getLongitude(),location.getLatitude()));
+        return location;
+
     }
 }

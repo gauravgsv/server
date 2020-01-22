@@ -90,9 +90,9 @@ public class Data implements DistanceFunctions.EuclideanCoordinate, Comparable<D
 	@Override
 	public String toString() {
 		return "Data{" +
-				"values=" + Arrays.toString(values) +
+				"id='" + id + '\'' +
+				", values=" + Arrays.toString(values) +
 				", hashCode=" + hashCode +
 				'}';
 	}
-
 }
