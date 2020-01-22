@@ -3,11 +3,13 @@ package com.citylive.server.MTree.Planar;
 import com.citylive.server.MTree.common.*;
 import com.citylive.server.MTree.utils.Pair;
 import com.citylive.server.MTree.utils.Utils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class MTree2D extends MTree<Data> {
     private static final PromotionFunction<Data> nonRandomPromotion = new PromotionFunction<Data>() {
         @Override

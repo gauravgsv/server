@@ -16,7 +16,31 @@ public class TopicService {
     private TopicRepository topicRepository;
 
     public Topic addTopic(Topic topic){
-        return topicRepository.save(topic.toBuilder().closed(false).time(new Timestamp((new Date()).getTime())).build());
+
+        Topic topic1 = topicRepository.save(topic.toBuilder().closed(false).time(new Timestamp((new Date()).getTime())).build());
+
+        List<String> nearbyUsers = mtree
+                .getNearestAsList(new Data(topic.getUserName(),topic.getLongitude(),topic.getLatitude()))
+                .stream()
+                .map(rs->rs.data.getId())
+                .collect(Collectors.toList());
+
+        Query query = new Query();
+        query.setDeviceIds(
+                nearbyUsers.stream()
+                        .map(userId->userRepository.getDeviceIdForUserId(userId))
+                        .collect(Collectors.toList())
+        );
+        query.setQuestion(topic.getQuestion());
+        //Query topic String ---- Topic topicId long
+        //query fields not set
+        try {
+            messagingService.sendNotificationToMultipleDevices(query);
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+        }
+
+        return topic1;
     }
 
 }
