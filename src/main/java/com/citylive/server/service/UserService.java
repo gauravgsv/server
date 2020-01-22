@@ -79,4 +79,8 @@ public class UserService {
         return location;
 
     }
+
+    public String getDeviceId(String userName) {
+        return userRepository.getDeviceIdForUserId(userName);
+    }
 }
