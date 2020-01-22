@@ -5,6 +5,7 @@ import com.citylive.server.MTree.common.Data;
 import com.citylive.server.dao.TopicRepository;
 import com.citylive.server.dao.UserRepository;
 import com.citylive.server.domain.Topic;
+import com.citylive.server.pojo.MessageType;
 import com.citylive.server.pojo.Query;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +48,11 @@ public class TopicService {
                         .collect(Collectors.toList())
         );
         query.setQuestion(topic.getQuestion());
-        //Query topic String ---- Topic topicId long
-        //query fields not set
+        query.setTopic(String.valueOf(topic.getTopicId()));
+        query.setSender(topic.getUserName());
+        query.setSenderDeviceId(userRepository.getDeviceIdForUserId(topic.getUserName()));
+        query.setType(MessageType.QUESTION);
+
         try {
             messagingService.sendNotificationToMultipleDevices(query);
         } catch (FirebaseMessagingException e) {
