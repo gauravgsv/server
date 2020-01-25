@@ -39,4 +39,24 @@ public class TopicController {
         return userName == null ? answerRepository.getAnswerByTopicId(topicId) :
                 answerRepository.getAnswerByUserAndTopicId(userName, topicId);
     }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/user")
+    public List<Topic> getTopicByUser(@RequestParam final String userName){
+        return topicService.getTopicByUser(userName);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/user/subscription")
+    public List<Topic> getTopicSubscribedByUser(@RequestParam final String userName){
+        return topicService.getTopicSubscribedByUser(userName);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/subscribe")
+    public void subscribeTopic(@RequestParam final String userName, @RequestParam final Integer topicId){
+        topicService.subscribeTopic(userName, topicId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/unsubscribe")
+    public void unsubscribeTopic(@RequestParam final String userName, @RequestParam final Integer topicId){
+        topicService.unsubscribeTopic(userName, topicId);
+    }
 }
