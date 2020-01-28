@@ -29,8 +29,7 @@ public class TopicController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/answer")
     public void addAnswer(@RequestBody Answer answer) {
-        answer.setTime(new Timestamp((new Date()).getTime()));
-        answerRepository.save(answer);
+        topicService.addAnswer(answer);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/answer")

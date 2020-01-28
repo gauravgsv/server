@@ -2,19 +2,23 @@ package com.citylive.server.service;
 
 import com.citylive.server.MTree.Planar.MTree2D;
 import com.citylive.server.MTree.common.Data;
+import com.citylive.server.dao.AnswerRepository;
 import com.citylive.server.dao.TopicRepository;
 import com.citylive.server.dao.UserRepository;
 import com.citylive.server.dao.UserTopicRepository;
+import com.citylive.server.domain.Answer;
 import com.citylive.server.domain.Topic;
 import com.citylive.server.domain.UserTopic;
 import com.citylive.server.domain.UserTopicPK;
 import com.citylive.server.pojo.MessageType;
 import com.citylive.server.pojo.Query;
+import com.citylive.server.pojo.Response;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
@@ -35,13 +39,16 @@ public class TopicService {
     private UserTopicRepository userTopicRepository;
 
     @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
     MessagingService messagingService;
     @Autowired
     MTree2D mtree;
 
     public Topic addTopic(Topic topic){
 
-        Topic topic1 = topicRepository.save(topic.toBuilder().closed(false).time(new Timestamp((new Date()).getTime())).build());
+        Topic updatedTopic = topicRepository.save(topic.toBuilder().closed(false).time(new Timestamp((new Date()).getTime())).build());
 
         List<String> nearbyUsers = mtree
                 .getNearestAsList(new Data(topic.getUserName(),topic.getLongitude(),topic.getLatitude()))
@@ -55,10 +62,10 @@ public class TopicService {
                         .map(userId->userRepository.getDeviceIdForUserId(userId))
                         .collect(Collectors.toList())
         );
-        query.setQuestion(topic.getQuestion());
-        query.setTopic(String.valueOf(topic.getTopicId()));
-        query.setSender(topic.getUserName());
-        query.setSenderDeviceId(userRepository.getDeviceIdForUserId(topic.getUserName()));
+        query.setQuestion(updatedTopic.getQuestion());
+        query.setTopic(String.valueOf(updatedTopic.getTopicId()));
+        query.setSender(updatedTopic.getUserName());
+        query.setSenderDeviceId(userRepository.getDeviceIdForUserId(updatedTopic.getUserName()));
         query.setType(MessageType.QUESTION);
 
         try {
@@ -67,7 +74,7 @@ public class TopicService {
             e.printStackTrace();
         }
 
-        return topic1;
+        return updatedTopic;
     }
 
     public List<Topic> getTopicByUser(final String userName){
@@ -90,5 +97,20 @@ public class TopicService {
         List<UserTopic> topicSubscribeByUser = userTopicRepository.getTopicSubscribeByUser(userName);
         final Set<Integer> topicIds = topicSubscribeByUser.stream().map(t -> t.getTopicId()).collect(Collectors.toSet());
         return topicIds.isEmpty() ? new ArrayList<>() : topicRepository.getTopicByIds(topicIds);
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.setTime(new Timestamp((new Date()).getTime()));
+        Answer savedAnswer = answerRepository.save(answer);
+        try {
+            messagingService.sendNotificationToTopic(Response.builder().messageTimestamp(new Time(savedAnswer.getTime().getTime()))
+                    .responseString(savedAnswer.getAnswer())
+                    .sender(savedAnswer.getUserName())
+                    .topic(savedAnswer.getTopicId().toString())
+                    .type(MessageType.CHAT)
+                    .build());
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

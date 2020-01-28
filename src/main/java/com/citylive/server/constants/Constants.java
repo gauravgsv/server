@@ -5,4 +5,5 @@ public class Constants {
   public static String RESPONSE_NOTIFICATION_TITLE = "Someone answered your question";
   public static String SILENT_NOTIFICATION = "Information";
   public static String QUERY_SENT_TEXT = "You query has been sent to % people";
+  public static String ERROR_RESPONSE = "Error processing your request";
 }
