@@ -1,6 +1,7 @@
 package com.citylive.server.pojo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 
@@ -17,6 +18,6 @@ public class Query {
 	
 	private String senderDeviceId;
 	
-	private ArrayList<String> deviceIds;
+	private List<String> deviceIds;
 
 }

@@ -20,4 +20,8 @@ public interface UserRepository extends CrudRepository<User, String> {
     @Transactional
     @Query(value = "Update CityLive.User Set deviceId=:deviceId where UserName=:userName", nativeQuery = true)
     void updateUserDeviceId(@Param("userName") String userName, @Param("deviceId") String deviceId);
+
+    @Query(value = "Select deviceId From CityLive.User where UserName=:userName", nativeQuery = true)
+    String getDeviceIdForUserId(@Param("userName") String userName);
+
 }

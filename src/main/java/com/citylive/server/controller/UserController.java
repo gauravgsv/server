@@ -37,6 +37,11 @@ public class UserController {
         userService.updateDeviceId(userName, deviceId);
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/deviceId")
+    public String getDeviceId(final String userName) {
+        return userService.getDeviceId(userName);
+    }
+
     @RequestMapping(method = RequestMethod.GET, path = "/find")
     public Optional<User> findByUserName(String userName) {
         return userService.findByUserName(userName);
