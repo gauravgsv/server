@@ -62,7 +62,7 @@ public class TopicService {
         query.setType(MessageType.QUESTION);
 
         try {
-            messagingService.sendNotificationToMultipleDevices(query);
+            messagingService.sendQueryToDevices(query);
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }

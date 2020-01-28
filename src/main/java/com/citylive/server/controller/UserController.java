@@ -22,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, path = "/signup")
     public User addUser(@RequestBody @Validated User user) {
         return userService.addUser(user);
     }
