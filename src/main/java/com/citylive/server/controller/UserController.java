@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/deviceId")
-    public String getDeviceId(final String userName) {
+    public Map<String, String> getDeviceId(final String userName) {
         return userService.getDeviceId(userName);
     }
 
