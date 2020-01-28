@@ -33,7 +33,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
-public class UserSecurity extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
@@ -57,12 +57,18 @@ public class UserSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**");
+        web.ignoring().antMatchers("/user/signup");
+        web.ignoring().antMatchers("/cityLive/user/signup");
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/webapp/**").permitAll()
+                .antMatchers("/user/signup").permitAll()
+                .antMatchers("/cityLive/user/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
