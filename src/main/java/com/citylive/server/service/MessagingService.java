@@ -70,15 +70,18 @@ public class MessagingService {
 	}
 
 	public Integer sendNotificationToMultipleDevices(Query query) throws FirebaseMessagingException {
-		List<String> registrationTokens = query.getDeviceIds();
-		Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE)
-				.setBody(query.getQuestion()).build();
-		MulticastMessage message = MulticastMessage.builder().putData("type", query.getType().toString())
-				.putData("topic", query.getTopic()).putData("question", query.getQuestion())
-				.putData("by", query.getSender()).setNotification(notification)
-				.addAllTokens(registrationTokens).build();
-		BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-		return response.getSuccessCount();
+		if(query.getDeviceIds()!=null && !query.getDeviceIds().isEmpty()) {
+			List<String> registrationTokens = query.getDeviceIds();
+			Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE)
+					.setBody(query.getQuestion()).build();
+			MulticastMessage message = MulticastMessage.builder().putData("type", query.getType().toString())
+					.putData("topic", query.getTopic()).putData("question", query.getQuestion())
+					.putData("by", query.getSender()).setNotification(notification)
+					.addAllTokens(registrationTokens).build();
+			BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+			return response.getSuccessCount();
+		}
+		return 0;
 	}
 
 	private String sendNotificationToDevice(Query query, Integer count) throws FirebaseMessagingException {
