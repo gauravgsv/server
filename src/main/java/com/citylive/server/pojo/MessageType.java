@@ -1,5 +1,5 @@
 package com.citylive.server.pojo;
 
 public enum MessageType {
-    QUESTION,CHAT;
+    QUESTION,CHAT,COUNT;
 }
