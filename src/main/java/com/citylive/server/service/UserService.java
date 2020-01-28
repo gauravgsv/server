@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -80,7 +82,10 @@ public class UserService {
 
     }
 
-    public String getDeviceId(String userName) {
-        return userRepository.getDeviceIdForUserId(userName);
+    public Map<String, String> getDeviceId(String userName) {
+        String deviceId = userRepository.getDeviceIdForUserId(userName);
+        Map<String, String> map = new HashMap<>();
+        map.put("deviceId",deviceId);
+        return map;
     }
 }
