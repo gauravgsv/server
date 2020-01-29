@@ -16,7 +16,6 @@ public class User {
     @NotNull
     @Id
     private String userName;
-    @NotNull
     private String firstName;
     private String lastName;
     @NotNull

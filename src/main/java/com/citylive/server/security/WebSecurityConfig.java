@@ -58,20 +58,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**");
         web.ignoring().antMatchers("/user/signup");
-        web.ignoring().antMatchers("/cityLive/user/signup");
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/resources/**").permitAll()
-                .antMatchers("/webapp/**").permitAll()
                 .antMatchers("/user/signup").permitAll()
-                .antMatchers("/cityLive/user/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .loginPage("/login")
+                .permitAll()
                 .successHandler(successHandler())
                 .failureHandler(failureHandler())
                 .and()
@@ -80,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .logout()
+                .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {

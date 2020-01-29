@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.citylive.server.pojo.MessageType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import com.google.firebase.messaging.Notification;
 
 @RestController
 @RequestMapping("/message")
+@Slf4j
 public class MessagingService {
 
 	@PostConstruct
@@ -70,24 +73,46 @@ public class MessagingService {
 	}
 
 	public Integer sendNotificationToMultipleDevices(Query query) throws FirebaseMessagingException {
-		List<String> registrationTokens = query.getDeviceIds();
-		Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE)
-				.setBody(query.getQuestion()).build();
-		MulticastMessage message = MulticastMessage.builder().putData("type", query.getType().toString())
-				.putData("topic", query.getTopic()).putData("question", query.getQuestion())
-				.putData("by", query.getSender()).setNotification(notification)
-				.addAllTokens(registrationTokens).build();
-		BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-		return response.getSuccessCount();
+		log.info("[sendNotificationToDevice] query " + query.getQuestion() + " sent to " + query.getDeviceIds().size()
+				+ " users on topic " + query.getTopic());
+		if(query.getDeviceIds()!=null && !query.getDeviceIds().isEmpty()) {
+			List<String> registrationTokens = query.getDeviceIds();
+			Notification notification = Notification.builder().setTitle(Constants.QUERY_NOTIFICATION_TITLE)
+					.setBody(query.getQuestion()).build();
+			MulticastMessage message = MulticastMessage.builder().putData("type", query.getType().toString())
+					.putData("topic", query.getTopic()).putData("question", query.getQuestion())
+					.putData("by", query.getSender()).setNotification(notification)
+					.addAllTokens(registrationTokens).build();
+			BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+			return response.getSuccessCount();
+		}
+		return 0;
 	}
 
 	private String sendNotificationToDevice(Query query, Integer count) throws FirebaseMessagingException {
-		String registrationToken = query.getSenderDeviceId();
-		Notification notification = Notification.builder().setTitle(Constants.SILENT_NOTIFICATION)
-				.setBody(Constants.QUERY_SENT_TEXT.replace("%", count.toString())).build();
-		Message message = Message.builder().putData("topic", query.getTopic()).setNotification(notification)
-				.setToken(registrationToken).build();
-		String response = FirebaseMessaging.getInstance().send(message);
-		return response;
+		log.info("[sendNotificationToDevice] query sender on " + query.getSenderDeviceId() + " topic "
+				+ query.getTopic());
+		if(query.getTopic()!=null && query.getSenderDeviceId()!=null){
+			String registrationToken = query.getSenderDeviceId();
+			Notification notification = Notification.builder().setTitle(Constants.SILENT_NOTIFICATION)
+					.setBody(Constants.QUERY_SENT_TEXT.replace("%", count.toString())).build();
+			Message message = Message.builder().putData("topic", query.getTopic()).putData("type", MessageType.COUNT.toString())
+					.putData("message",Constants.QUERY_SENT_TEXT.replace("%", count.toString())).setNotification(notification)
+					.setToken(registrationToken).build();
+			String response = FirebaseMessaging.getInstance().send(message);
+			return response;
+		} else if(query.getSenderDeviceId()!=null) {
+			String registrationToken = query.getSenderDeviceId();
+			Notification notification = Notification.builder().setTitle(Constants.SILENT_NOTIFICATION)
+					.setBody(Constants.ERROR_RESPONSE).build();
+			Message message = Message.builder().putData("type", MessageType.COUNT.toString())
+					.putData("message",Constants.ERROR_RESPONSE).setNotification(notification)
+					.setToken(registrationToken).build();
+			String response = FirebaseMessaging.getInstance().send(message);
+			return response;
+		} else{
+			log.error("Sender device Id can not be null");
+			return null;
+		}
 	}
 }
