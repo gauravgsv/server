@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Table(name = "Topic")
 public class Topic {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long topicId;
     @Id
     @NotNull
