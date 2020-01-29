@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.sql.Timestamp;
@@ -103,7 +102,7 @@ public class TopicService {
         answer.setTime(new Timestamp((new Date()).getTime()));
         Answer savedAnswer = answerRepository.save(answer);
         try {
-            messagingService.sendNotificationToTopic(Response.builder().messageTimestamp(new Time(savedAnswer.getTime().getTime()))
+            messagingService.sendNotificationToTopic(Response.builder().messageTimestamp(savedAnswer.getTime())
                     .responseString(savedAnswer.getAnswer())
                     .sender(savedAnswer.getUserName())
                     .topic(savedAnswer.getTopicId().toString())

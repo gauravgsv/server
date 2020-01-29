@@ -1,6 +1,6 @@
 package com.citylive.server.pojo;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class Response {
 	
 	private String sender;
 	
-	private Time messageTimestamp;
+	private Timestamp messageTimestamp;
 	
 	private String responseString;
 
