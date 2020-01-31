@@ -10,6 +10,8 @@ import com.citylive.server.domain.UserLocation;
 import com.citylive.server.domain.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,6 +38,8 @@ public class UserService {
     @Transactional
     public User addUser(User user) {
         user.setEnabled(true);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User updatedUser = userRepository.save(user);
         userRoleRepository.save(UserRole.builder().userName(updatedUser.getUserName()).role("ROLE_USER").build());
         return updatedUser;
