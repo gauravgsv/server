@@ -27,6 +27,12 @@ public class TopicController {
         return topicService.addTopic(topic);
     }
 
+
+    @GetMapping
+    public Topic getTopic(@RequestParam Integer topicId) {
+        return topicService.getTopicById(topicId);
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "/answer")
     public void addAnswer(@RequestBody Answer answer) {
         topicService.addAnswer(answer);

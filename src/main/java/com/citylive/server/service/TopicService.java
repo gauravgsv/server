@@ -13,6 +13,7 @@ import com.citylive.server.domain.UserTopicPK;
 import com.citylive.server.pojo.MessageType;
 import com.citylive.server.pojo.Query;
 import com.citylive.server.pojo.Response;
+import com.google.common.collect.Sets;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,5 +112,10 @@ public class TopicService {
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public Topic getTopicById(Integer topicId) {
+        List<Topic> topicByIds = topicRepository.getTopicByIds(Sets.newHashSet(topicId));
+        return !topicByIds.isEmpty() ? topicByIds.get(0) : Topic.builder().build();
     }
 }
