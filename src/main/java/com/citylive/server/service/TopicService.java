@@ -51,15 +51,10 @@ public class TopicService {
 
         Topic updatedTopic = topicRepository.save(topic.toBuilder().closed(false).time(new Timestamp((new Date()).getTime())).build());
 
-        List<MTree2D.ResultItem> users1 = mtree
-                .getNearestAsList(new Data(topic.getUserName(),topic.getLongitude(),topic.getLatitude()),5,10);
-
         List<String> nearbyUsers = mtree
                 .getNearestAsList(new Data(topic.getUserName(),topic.getLongitude(),topic.getLatitude()),5,10)
                 .stream()
-                .filter(
-                        rs->!rs.data.getId().equals(topic.getUserName())
-                )
+                .filter(rs->!rs.data.getId().equals(topic.getUserName()))
                 .map(rs->rs.data.getId())
                 .collect(Collectors.toList());
 
